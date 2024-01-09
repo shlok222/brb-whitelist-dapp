@@ -1,0 +1,7 @@
+type AddressAddedToWhitelist @entity(immutable: true) {
+  id: Bytes!
+  whitelistedAddress: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
