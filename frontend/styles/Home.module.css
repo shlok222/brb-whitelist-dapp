@@ -43,6 +43,15 @@
     cursor: pointer;
     margin-bottom: 2%;
   }
+
+  .subgraph{
+    margin-left: 6%;
+  }
+
+  .line{
+    border-top: 1px solid #000;
+  }
+
   @media (max-width: 1000px) {
     .main {
       width: 100%;

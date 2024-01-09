@@ -5,7 +5,9 @@ import styles from '../styles/Home.module.css'
 import Web3Modal from 'web3modal'
 import { useState, useEffect, useRef } from 'react'
 import { providers, Contract } from 'ethers'
+import { createClient } from 'urql';
 import { WHITELIST_CONTRACT_ADDRESS, abi } from '../constants/index'
+import { get } from 'http'
 
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
@@ -14,6 +16,22 @@ export default function Home() {
   const [numberOfWhitelisted, setNumberOfWhitelisted] = useState(0);
 
   const web3ModalRef = useRef();
+  
+  const QueryURL = "https://api.studio.thegraph.com/query/62337/brb-subgraph/version/latest"
+
+  const query = `{
+    addressAddedToWhitelists {
+      whitelistedAddress
+      blockNumber
+      transactionHash
+    }
+  }`
+
+  const client = createClient({
+    url: QueryURL
+  })
+
+  const [addressAddedToWhitelists, setWhitelist] = useState([]);
 
   const getProviderOrSigner = async (needSigner = false) => {
     const provider = await web3ModalRef.current.connect();
@@ -148,6 +166,14 @@ export default function Home() {
     }
   }, [walletConnected]);
   
+  useEffect(()=>{
+    const getWhitelists = async () => {
+    const {data} = await client.query(query).toPromise();
+    console.log(data);
+    setWhitelist(data.addressAddedToWhitelists);
+  }
+  getWhitelists();
+  }, [])
 
   return (
     <div>
@@ -158,7 +184,7 @@ export default function Home() {
       </Head>
       <div className={styles.main}>
         <div>
-          <h1 className={styles.title}>Welcome to Crypto-Devs!</h1>
+          <h1 className={styles.title}>Welcome to TOP-G Devs!</h1>
           <div className={styles.description}>
             Its an NFT collection for developers in Crypto.
           </div>
@@ -167,6 +193,25 @@ export default function Home() {
           </div>
           {renderButton()}
         </div>
+      </div>
+
+      <div className={styles.subgraph}>
+      Whitelist Addresses Details:
+      </div>
+      <div className={styles.subgraph}>
+        <br/>{
+        addressAddedToWhitelists!==null && addressAddedToWhitelists.length>0 && addressAddedToWhitelists.map((addressAddedToWhitelists)=>{
+          return(
+            <div>
+              <br/><div>whitelistedAddress: {addressAddedToWhitelists.whitelistedAddress}</div>
+              <br/><div>blockNumber: {addressAddedToWhitelists.blockNumber}</div>
+              <br/><div>transactionHash: {addressAddedToWhitelists.transactionHash}</div>
+              <br/><div className={styles.line}></div>
+            </div>
+          )
+        })
+        }
+        <br/>        
       </div>
 
       <footer className={styles.footer}>
