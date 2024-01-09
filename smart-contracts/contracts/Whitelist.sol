@@ -14,6 +14,9 @@ contract Whitelist {
     // numAddressesWhitelisted would be used to keep track of how many addresses have been whitelisted
     uint8 public numAddressesWhitelisted;
 
+    // Event emitted when an address is added to the whitelist
+    event AddressAddedToWhitelist(address indexed whitelistedAddress);
+
     // Setting the Max number of whitelisted addresses
     // User will put the value at the time of deployment
     constructor(uint8 _maxWhitelistedAddresses) {
@@ -33,6 +36,9 @@ contract Whitelist {
         whitelistedAddresses[msg.sender] = true;
         // Increase the number of whitelisted addresses
         numAddressesWhitelisted += 1;
+
+        // Emit the AddressAddedToWhitelist event
+        emit AddressAddedToWhitelist(msg.sender);
     }
 
 }
